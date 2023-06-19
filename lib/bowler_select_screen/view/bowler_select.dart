@@ -80,6 +80,9 @@ class _BowlerSelectingScreenState extends State<BowlerSelectingScreen> {
                 onPressed: () {
                   setState(() {
                     Global.currentBowler = selectedBaller - 1;
+                    print(Global.currentBowler);
+                    Global.bowlerSelected(Global.currentBowler);
+
                     Navigator.pushNamed(context, ScoreCard.id);
                   });
                 },

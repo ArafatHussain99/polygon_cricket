@@ -13,11 +13,6 @@ class BatsmanSelectScreen extends StatefulWidget {
 class _BatsmanSelectScreenState extends State<BatsmanSelectScreen> {
   late List<String> batsmans = Global.battingTeamList;
   int selectedBatsman = 0;
-  @override
-  void initState() {
-    Global.createBowlingTeam();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

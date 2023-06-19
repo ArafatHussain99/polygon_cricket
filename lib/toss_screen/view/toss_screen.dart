@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polygon_cricket/batsman_select_screen/view/batsman_select.dart';
 import 'package:polygon_cricket/global.dart';
+import 'package:polygon_cricket/score_card/view/scorecard.dart';
 
 class TossScreen extends StatefulWidget {
   static const String id = 'tossScreen';
@@ -176,7 +177,7 @@ class _TossScreenState extends State<TossScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, BatsmanSelectScreen.id);
+                      Navigator.pushNamed(context, ScoreCard.id);
                     },
                     style: TextButton.styleFrom(
                         shape: RoundedRectangleBorder(
