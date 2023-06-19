@@ -34,7 +34,7 @@ class _ScoreCardState extends State<ScoreCard> {
                     opacity: 0.7,
                     child: Image.asset(
                       'assets/images/background.jpg',
-                      fit: BoxFit.fitWidth,
+                      fit: BoxFit.fill,
                     ),
                   ),
                 ),
@@ -93,11 +93,12 @@ class _ScoreCardState extends State<ScoreCard> {
                   ),
                 ),
                 Positioned(
-                  top: MediaQuery.of(context).size.height / 1.25,
-                  left: MediaQuery.of(context).size.width / 2.35,
+                  top: MediaQuery.of(context).size.height / 1.15,
+                  left: MediaQuery.of(context).size.width / 2.3,
                   child: RunButton(
                     onTap: () {
                       setState(() {
+                        Global.wic = true;
                         Global.addABall();
                         Global.check(context);
                         Global.totalWic += 1;
@@ -108,8 +109,21 @@ class _ScoreCardState extends State<ScoreCard> {
                   ),
                 ),
                 Positioned(
+                  top: MediaQuery.of(context).size.height / 1.35,
+                  left: MediaQuery.of(context).size.width / 2.3,
+                  child: RunButton(
+                    onTap: () {
+                      setState(() {
+                        Global.addABall();
+                        Global.check(context);
+                      });
+                    },
+                    text: 'Dot',
+                  ),
+                ),
+                Positioned(
                   top: MediaQuery.of(context).size.height / 1.25,
-                  left: 3,
+                  left: 20,
                   child: RunButton(
                     onTap: () {
                       setState(() {
@@ -123,7 +137,7 @@ class _ScoreCardState extends State<ScoreCard> {
                 ),
                 Positioned(
                   top: MediaQuery.of(context).size.height / 2,
-                  left: 3,
+                  left: 20,
                   child: RunButton(
                     onTap: () {
                       setState(() {

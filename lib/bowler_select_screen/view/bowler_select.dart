@@ -83,7 +83,7 @@ class _BowlerSelectingScreenState extends State<BowlerSelectingScreen> {
                     print(Global.currentBowler);
                     Global.bowlerSelected(Global.currentBowler);
 
-                    Navigator.pushNamed(context, ScoreCard.id);
+                    Navigator.pop(context);
                   });
                 },
                 style: TextButton.styleFrom(

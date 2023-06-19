@@ -71,7 +71,7 @@ class _BatsmanSelectScreenState extends State<BatsmanSelectScreen> {
                     onPressed: () {
                       setState(() {
                         Global.currentBatsman = selectedBatsman - 1;
-                        Navigator.pushNamed(context, BowlerSelectingScreen.id);
+                        Navigator.pop(context);
                       });
                     },
                     style: TextButton.styleFrom(

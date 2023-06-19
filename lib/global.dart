@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:polygon_cricket/batsman_select_screen/view/batsman_select.dart';
 import 'package:polygon_cricket/bowler_select_screen/view/bowler_select.dart';
 
 class Global {
@@ -7,6 +8,7 @@ class Global {
   static int totalRun = 0;
   static int totalWic = 0;
   static double totalOvers = 0;
+  static bool wic = false;
   static addABall() {
     over += .1;
     String tempOverHolder = over.toStringAsFixed(1);
@@ -15,14 +17,23 @@ class Global {
   }
 
   static check(BuildContext context) {
-    if (over == nextOver) {
+    if (over == nextOver || over == 0) {
       showDialog(
           context: context,
           builder: (context) => const AlertDialog(
                 title: Text('Over Completed!'),
                 content: BowlerSelectingScreen(),
               ));
-      nextOver += 1;
+      if (over != 0) nextOver += 1;
+    }
+    if (wic || over == 0) {
+      wic = false;
+      showDialog(
+          context: context,
+          builder: (context) => const AlertDialog(
+                title: Text('Over Completed!'),
+                content: BatsmanSelectScreen(),
+              ));
     }
   }
 
@@ -50,7 +61,7 @@ class Global {
   static int currentBowler = -1;
   static List<Map<String, dynamic>> battingTeam = [];
   static List<Map<String, dynamic>> ballingTeam = [];
-  static createBowlingTeam() {
+  static createBowlingTeam() async {
     double maxOvers = totalOvers / 4;
     int maxOverToInt = maxOvers.round();
     for (int i = 0; i < ballingTeamList.length; i++) {
