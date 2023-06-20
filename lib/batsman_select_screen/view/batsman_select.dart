@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:polygon_cricket/bowler_select_screen/view/bowler_select.dart';
 import 'package:polygon_cricket/global.dart';
 
 class BatsmanSelectScreen extends StatefulWidget {
@@ -11,7 +10,6 @@ class BatsmanSelectScreen extends StatefulWidget {
 }
 
 class _BatsmanSelectScreenState extends State<BatsmanSelectScreen> {
-  late List<String> batsmans = Global.battingTeamList;
   int selectedBatsman = 0;
 
   @override
@@ -33,7 +31,7 @@ class _BatsmanSelectScreenState extends State<BatsmanSelectScreen> {
               ),
               Expanded(
                 child: ListView.builder(
-                    itemCount: batsmans.length + 1,
+                    itemCount: Global.battingTeam.length + 1,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: () {
@@ -50,14 +48,18 @@ class _BatsmanSelectScreenState extends State<BatsmanSelectScreen> {
                                       fontSize: 17),
                                 ),
                               )
-                            : ListTile(
-                                selectedColor: Colors.amber,
-                                selected: false,
-                                tileColor: selectedBatsman == index
-                                    ? const Color(0xff86B9B0)
-                                    : Colors.transparent,
-                                title: Text(batsmans[index - 1]),
-                              ),
+                            : Global.battingTeam[index - 1]['status'] ==
+                                    'not out'
+                                ? ListTile(
+                                    selectedColor: Colors.amber,
+                                    selected: false,
+                                    tileColor: selectedBatsman == index
+                                        ? const Color(0xff86B9B0)
+                                        : Colors.transparent,
+                                    title: Text(
+                                        Global.battingTeam[index - 1]['name']),
+                                  )
+                                : Container(),
                       );
                     }),
               ),

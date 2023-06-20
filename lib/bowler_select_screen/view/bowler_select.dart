@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:polygon_cricket/global.dart';
-import 'package:polygon_cricket/score_card/view/scorecard.dart';
 
 class BowlerSelectingScreen extends StatefulWidget {
   static const String id = 'bowlerselectingScreen';
@@ -11,7 +10,6 @@ class BowlerSelectingScreen extends StatefulWidget {
 }
 
 class _BowlerSelectingScreenState extends State<BowlerSelectingScreen> {
-  late List<String> bowlers = Global.ballingTeamList;
   int selectedBaller = 0;
   @override
   Widget build(BuildContext context) {
@@ -32,7 +30,7 @@ class _BowlerSelectingScreenState extends State<BowlerSelectingScreen> {
               ),
               Expanded(
                 child: ListView.builder(
-                    itemCount: bowlers.length + 1,
+                    itemCount: Global.bowlingTeam.length + 1,
                     itemBuilder: (BuildContext context, int index) {
                       return GestureDetector(
                         onTap: () {
@@ -61,15 +59,20 @@ class _BowlerSelectingScreenState extends State<BowlerSelectingScreen> {
                                   ),
                                 ),
                               )
-                            : ListTile(
-                                selectedColor: Colors.amber,
-                                selected: false,
-                                tileColor: selectedBaller == index
-                                    ? const Color(0xff86B9B0)
-                                    : Colors.transparent,
-                                title: Text(bowlers[index - 1]),
-                                trailing: Text(Global.returnOvers(index)),
-                              ),
+                            : Global.bowlingTeam[index - 1]['status'] ==
+                                    'not completed'
+                                ? ListTile(
+                                    selectedColor: Colors.amber,
+                                    selected: false,
+                                    tileColor: selectedBaller == index
+                                        ? const Color(0xff86B9B0)
+                                        : Colors.transparent,
+                                    title: Text(
+                                        Global.bowlingTeam[index - 1]['name']),
+                                    trailing:
+                                        Text(Global.returnOvers(index - 1)),
+                                  )
+                                : Container(),
                       );
                     }),
               ),
@@ -80,7 +83,6 @@ class _BowlerSelectingScreenState extends State<BowlerSelectingScreen> {
                 onPressed: () {
                   setState(() {
                     Global.currentBowler = selectedBaller - 1;
-                    print(Global.currentBowler);
                     Global.bowlerSelected(Global.currentBowler);
 
                     Navigator.pop(context);
