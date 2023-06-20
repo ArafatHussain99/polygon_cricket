@@ -23,6 +23,7 @@ class _ScoreCardState extends State<ScoreCard> {
     Future.delayed(const Duration(milliseconds: 500), () {
       Global.check(context);
     });
+    null;
 
     return Scaffold(
       body: Center(
@@ -48,6 +49,7 @@ class _ScoreCardState extends State<ScoreCard> {
                     child: RunButton(
                         onTap: () {
                           setState(() {
+                            Global.wic = true;
                             Global.addABall();
                             Global.check(context);
                             Global.totalRun += -5;
@@ -82,10 +84,10 @@ class _ScoreCardState extends State<ScoreCard> {
                   child: RunButton(
                     onTap: () {
                       setState(() {
-                        Global.check(context);
                         Global.totalRun += 1;
                         Global.bowlingTeam[Global.currentBowler]['runs'] += 1;
                         Global.extra += 1;
+                        Global.check(context);
                       });
                     },
                     text: 'No Ball',
@@ -97,10 +99,10 @@ class _ScoreCardState extends State<ScoreCard> {
                   child: RunButton(
                     onTap: () {
                       setState(() {
-                        Global.check(context);
                         Global.totalRun += 1;
                         Global.bowlingTeam[Global.currentBowler]['runs'] += 1;
                         Global.extra += 1;
+                        Global.check(context);
                       });
                     },
                     text: 'Wide',

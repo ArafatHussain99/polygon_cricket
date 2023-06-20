@@ -19,7 +19,7 @@ class Global {
   }
 
   static check(BuildContext context) {
-    if (currentOver == nextOver || currentOver == 0) {
+    if (currentOver == nextOver || (currentOver == 0 && totalRun == 0)) {
       showDialog(
           context: context,
           builder: (context) => const AlertDialog(
@@ -27,7 +27,7 @@ class Global {
               ));
       if (currentOver != 0) nextOver += 1;
     }
-    if (wic || currentOver == 0) {
+    if (wic || (currentOver == 0 && totalRun == 0)) {
       wic = false;
       showDialog(
           context: context,
@@ -76,8 +76,6 @@ class Global {
   }
 
   static createBattingTeam(List<String> team) async {
-    double maxOvers = totalOvers / 4;
-    int maxOverToInt = maxOvers.round();
     for (int i = 0; i < team.length; i++) {
       battingTeam
           .add({'name': team[i], 'runs': 0, 'ball': 0, 'status': 'not out'});
@@ -91,7 +89,7 @@ class Global {
   static bowlerSelected(int i) {
     bowlingTeam[i]['overs'] -= 1;
     if (bowlingTeam[i]['overs'] == 0) {
-      bowlingTeam.removeAt(i);
+      bowlingTeam[i]['status'] = 'completed';
     }
   }
 }
