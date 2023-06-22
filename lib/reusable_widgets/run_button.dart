@@ -13,12 +13,12 @@ class RunButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onTap,
       style: ElevatedButton.styleFrom(
-        minimumSize: const Size(50, 40),
+        minimumSize: const Size(50, 50),
         backgroundColor: color,
       ),
       child: Text(
         text,
-        style: TextStyle(color: Colors.white, fontSize: 20),
+        style: TextStyle(color: Colors.white, fontSize: 25),
       ),
     );
   }

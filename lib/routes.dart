@@ -16,10 +16,10 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
         settings: routeSettings,
         builder: (_) => TossScreen(),
       );
-    case ScoreCard.id:
+    case ScoreWheel.id:
       return MaterialPageRoute(
         settings: routeSettings,
-        builder: (_) => ScoreCard(),
+        builder: (_) => ScoreWheel(),
       );
     case BowlerSelectingScreen.id:
       return MaterialPageRoute(

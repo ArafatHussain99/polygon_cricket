@@ -10,27 +10,75 @@ class Global {
   static double totalOvers = 0;
   static bool wic = false;
   static int extra = 0;
-  static addABall() {
+  static int toss = 0;
+  static String matchType = '';
+  static int tossWinnerSelected = -1;
+  static int runLimit = 0;
+  static bool teamCreatedStatus = false;
+  static bool overAddedToNextOver = false;
+  static bool animation = false;
+  static addABall(BuildContext context) {
     currentOver += .1;
     String tempOverHolder = currentOver.toStringAsFixed(1);
     currentOver = double.parse(tempOverHolder);
-    if (tempOverHolder[2] == '6') currentOver += 0.4;
-    Global.battingTeam[Global.currentBatsman]['ball'] += 1;
+    if (tempOverHolder[2] == '6' && tempOverHolder.length == 3) {
+      currentOver += 0.4;
+    }
+    if (tempOverHolder[tempOverHolder.length - 1] == '6' &&
+        tempOverHolder.length == 4) {
+      currentOver += 0.4;
+    }
+    if (wic || currentBatsman == -1) {
+      print(wic);
+      wic = false;
+      if (currentOver != 0) {
+        totalWic += 1;
+      }
+      showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => const AlertDialog(
+                content: BatsmanSelectScreen(),
+              ));
+    } else {
+      Global.battingTeam[Global.currentBatsman]['ball'] += 1;
+    }
   }
 
   static check(BuildContext context) {
-    if (currentOver == nextOver || (currentOver == 0 && totalRun == 0)) {
+    if (currentOver == nextOver || currentBowler == -1) {
       showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (context) => const AlertDialog(
                 content: BowlerSelectingScreen(),
               ));
-      if (currentOver != 0) nextOver += 1;
+      if (currentOver != 0) {
+        currentBowler = -1;
+        if (!overAddedToNextOver) {
+          nextOver += 1;
+          overAddedToNextOver = true;
+        }
+      }
     }
-    if (wic || (currentOver == 0 && totalRun == 0)) {
+    String tempOverHolder = currentOver.toStringAsFixed(1);
+    currentOver = double.parse(tempOverHolder);
+    if (tempOverHolder[2] == '1' && tempOverHolder.length == 3) {
+      overAddedToNextOver = false;
+    }
+    if (tempOverHolder[tempOverHolder.length - 1] == '1' &&
+        tempOverHolder.length == 4) {
+      overAddedToNextOver = false;
+    }
+    if (wic || currentBatsman == -1) {
+      print(wic);
       wic = false;
+      if (currentOver != 0) {
+        totalWic += 1;
+      }
       showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (context) => const AlertDialog(
                 content: BatsmanSelectScreen(),
               ));
@@ -59,10 +107,11 @@ class Global {
   ];
   static int currentBatsman = -1;
   static int currentBowler = -1;
+  static int lastBowler = -2;
   static List<Map<String, dynamic>> battingTeam = [];
   static List<Map<String, dynamic>> bowlingTeam = [];
   static createBowlingTeam(List<String> team) async {
-    double maxOvers = totalOvers / 4;
+    double maxOvers = totalOvers < 4 ? 1 : totalOvers / 4;
     int maxOverToInt = maxOvers.round();
     for (int i = 0; i < team.length; i++) {
       bowlingTeam.add({

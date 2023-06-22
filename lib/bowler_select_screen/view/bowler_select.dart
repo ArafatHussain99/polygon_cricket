@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:polygon_cricket/global.dart';
+import 'package:polygon_cricket/score_wheel/view/scorewheel.dart';
+
+import '../../constants/utils.dart';
 
 class BowlerSelectingScreen extends StatefulWidget {
   static const String id = 'bowlerselectingScreen';
@@ -83,9 +86,18 @@ class _BowlerSelectingScreenState extends State<BowlerSelectingScreen> {
                 onPressed: () {
                   setState(() {
                     Global.currentBowler = selectedBaller - 1;
-                    Global.bowlerSelected(Global.currentBowler);
-
-                    Navigator.pop(context);
+                    print(
+                        'last Bowler = ${Global.lastBowler}, current bowler = ${Global.currentBowler}');
+                    if (Global.currentBowler == -1) {
+                      showSnackBar(context, 'Please select a bowler');
+                    } else if (Global.lastBowler == Global.currentBowler) {
+                      showSnackBar(context,
+                          'Please select another bowler, since ${Global.bowlingTeam[Global.lastBowler]['name']} bowled last over.');
+                    } else {
+                      Global.lastBowler = Global.currentBowler;
+                      Global.bowlerSelected(Global.currentBowler);
+                      Navigator.pushNamed(context, ScoreWheel.id);
+                    }
                   });
                 },
                 style: TextButton.styleFrom(

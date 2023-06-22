@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:polygon_cricket/constants/utils.dart';
 import 'package:polygon_cricket/global.dart';
+
+import '../../score_wheel/view/scorewheel.dart';
 
 class BatsmanSelectScreen extends StatefulWidget {
   static const String id = 'batsmanscreen';
@@ -69,23 +72,29 @@ class _BatsmanSelectScreenState extends State<BatsmanSelectScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextButton(
-                    onPressed: () {
-                      setState(() {
-                        Global.currentBatsman = selectedBatsman - 1;
-                        Navigator.pop(context);
-                      });
-                    },
-                    style: TextButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        foregroundColor: Colors.white,
-                        backgroundColor: const Color(0xff041421)),
-                    child: const Text(
-                      'Confirm',
-                      style: TextStyle(fontSize: 30),
-                    ),
-                  ),
+                  Builder(builder: (BuildContext dialogContext) {
+                    return TextButton(
+                      onPressed: () {
+                        setState(() {
+                          Global.currentBatsman = selectedBatsman - 1;
+                          if (Global.currentBatsman == -1) {
+                            showSnackBar(context, 'Please select a batsman');
+                          } else {
+                            Navigator.pushNamed(context, ScoreWheel.id);
+                          }
+                        });
+                      },
+                      style: TextButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          foregroundColor: Colors.white,
+                          backgroundColor: const Color(0xff041421)),
+                      child: const Text(
+                        'Confirm',
+                        style: TextStyle(fontSize: 30),
+                      ),
+                    );
+                  }),
                 ],
               ),
             ],

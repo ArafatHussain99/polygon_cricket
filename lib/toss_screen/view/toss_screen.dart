@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:polygon_cricket/batsman_select_screen/view/batsman_select.dart';
+import 'package:polygon_cricket/constants/utils.dart';
 import 'package:polygon_cricket/global.dart';
 import 'package:polygon_cricket/score_wheel/view/scorewheel.dart';
 
@@ -12,11 +12,10 @@ class TossScreen extends StatefulWidget {
 }
 
 class _TossScreenState extends State<TossScreen> {
-  String tossWinner = 'Team A';
-  String winnerSelected = 'none';
   String selectedMatchType = 'Test';
   List<String> matchTypes = <String>['Test', 'Limited Overs'];
   final overController = TextEditingController();
+  final runLimitController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,7 +42,7 @@ class _TossScreenState extends State<TossScreen> {
                     bottom: 33,
                     right: -30,
                     child: Text(
-                      tossWinner,
+                      Global.toss == 0 ? 'Team A' : 'Team B',
                       style: const TextStyle(
                           fontSize: 30, fontWeight: FontWeight.bold),
                     ),
@@ -58,14 +57,14 @@ class _TossScreenState extends State<TossScreen> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          winnerSelected = 'batting';
+                          Global.tossWinnerSelected = 0;
                         });
                       },
                       child: Container(
                         height: 200,
                         width: 150,
                         decoration: BoxDecoration(
-                            color: winnerSelected != 'batting'
+                            color: Global.tossWinnerSelected != 0
                                 ? const Color(0xffD0D6D6)
                                 : const Color(0xff86B9B0),
                             borderRadius: BorderRadius.circular(15)),
@@ -83,13 +82,13 @@ class _TossScreenState extends State<TossScreen> {
                     GestureDetector(
                       onTap: () {
                         setState(() {
-                          winnerSelected = 'balling';
+                          Global.tossWinnerSelected = 1;
                         });
                       },
                       child: Container(
                         padding: const EdgeInsets.all(7),
                         decoration: BoxDecoration(
-                            color: winnerSelected != 'balling'
+                            color: Global.tossWinnerSelected != 1
                                 ? const Color(0xffD0D6D6)
                                 : const Color(0xff86B9B0),
                             borderRadius: BorderRadius.circular(15)),
@@ -144,6 +143,38 @@ class _TossScreenState extends State<TossScreen> {
                 child: Row(
                   children: [
                     const Text(
+                      'Run Limit: ',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                        width: 150,
+                        child: TextField(
+                          onChanged: (x) {
+                            Global.runLimit = int.parse(x);
+                          },
+                          controller: runLimitController,
+                          keyboardType: TextInputType.number,
+                          textAlign: TextAlign.center,
+                          decoration: const InputDecoration(
+                            hintText: 'Add a run limit',
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20.0)),
+                            ),
+                          ),
+                        ))
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  children: [
+                    const Text(
                       'Match Tye: ',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -177,8 +208,21 @@ class _TossScreenState extends State<TossScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: TextButton(
                     onPressed: () {
-                      Navigator.pushNamedAndRemoveUntil(context, ScoreCard.id,
-                          ModalRoute.withName(TossScreen.id));
+                      Global.totalOvers == 0
+                          ? showSnackBar(context, 'Please select total overs.')
+                          : Global.tossWinnerSelected == -1
+                              ? showSnackBar(context,
+                                  'Please select what the toss winner wants to do.')
+                              : Global.runLimit == 0
+                                  ? showSnackBar(
+                                      context, 'Add a run limit please.')
+                                  : Global.runLimit > 40
+                                      ? showSnackBar(context,
+                                          'Add a run limit below 40 runs please.')
+                                      : Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          ScoreWheel.id,
+                                          ModalRoute.withName(TossScreen.id));
                     },
                     style: TextButton.styleFrom(
                         shape: RoundedRectangleBorder(
