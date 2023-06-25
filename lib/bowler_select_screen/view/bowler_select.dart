@@ -86,8 +86,6 @@ class _BowlerSelectingScreenState extends State<BowlerSelectingScreen> {
                 onPressed: () {
                   setState(() {
                     Global.currentBowler = selectedBaller - 1;
-                    print(
-                        'last Bowler = ${Global.lastBowler}, current bowler = ${Global.currentBowler}');
                     if (Global.currentBowler == -1) {
                       showSnackBar(context, 'Please select a bowler');
                     } else if (Global.lastBowler == Global.currentBowler) {

@@ -47,8 +47,11 @@ class _BatsmanSelectScreenState extends State<BatsmanSelectScreen> {
                                 title: Text(
                                   'Name',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 17),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 17,
+                                    textBaseline: TextBaseline.alphabetic,
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
                               )
                             : Global.battingTeam[index - 1]['status'] ==
@@ -62,7 +65,24 @@ class _BatsmanSelectScreenState extends State<BatsmanSelectScreen> {
                                     title: Text(
                                         Global.battingTeam[index - 1]['name']),
                                   )
-                                : Container(),
+                                : Global.battingTeam
+                                        .where((player) =>
+                                            player['status'] == 'not out')
+                                        .isEmpty
+                                    ? Global.battingTeam[index - 1]['status'] ==
+                                            'limit exceeded'
+                                        ? ListTile(
+                                            selectedColor: Colors.amber,
+                                            selected: false,
+                                            tileColor: selectedBatsman == index
+                                                ? const Color(0xff86B9B0)
+                                                : Colors.transparent,
+                                            title: Text(
+                                                Global.battingTeam[index - 1]
+                                                    ['name']),
+                                          )
+                                        : Container()
+                                    : Container(),
                       );
                     }),
               ),

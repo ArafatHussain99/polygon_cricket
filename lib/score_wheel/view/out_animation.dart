@@ -20,24 +20,26 @@ class _OutAnimationState extends State<OutAnimation> {
     'assets/images/out2.jpg',
     'assets/images/out1.jpg',
     'assets/images/out2.jpg',
-    'assets/images/out1.jpg',
-    'assets/images/out2.jpg'
   ];
   @override
   Widget build(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 5000), () {
+    Future.delayed(const Duration(milliseconds: 3500), () {
       Global.animation = false;
       Global.currentBatsman = -1;
+      Global.wic = true;
+      if (Global.currentOver == Global.nextOver) {
+        Global.currentBowler = -1;
+      }
       Global.check(context);
     });
     null;
     return SizedBox(
-      height: 570,
+      height: MediaQuery.of(context).size.height - 160,
       child: CarouselSlider(
         options: CarouselOptions(
             height: double.infinity,
             autoPlay: true,
-            autoPlayInterval: const Duration(milliseconds: 1000),
+            autoPlayInterval: const Duration(milliseconds: 500),
             enableInfiniteScroll: true,
             scrollPhysics: null,
             autoPlayAnimationDuration: const Duration(milliseconds: 10),

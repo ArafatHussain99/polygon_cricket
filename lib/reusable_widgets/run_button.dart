@@ -18,7 +18,7 @@ class RunButton extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(color: Colors.white, fontSize: 25),
+        style: const TextStyle(color: Colors.white, fontSize: 25),
       ),
     );
   }
