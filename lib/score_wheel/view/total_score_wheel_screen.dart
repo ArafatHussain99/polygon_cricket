@@ -17,6 +17,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
   List<Map<String, dynamic>> _journals = [];
   bool _isLoading = true;
   void _refreshJournals() async {
+    await DatabaseHelper.createItem('null', 'null', 'null', -1);
     final data = await DatabaseHelper.getItems();
     setState(() {
       _journals = data;
@@ -27,6 +28,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
   @override
   void initState() {
     if (Global.teamCreatedStatus == false) {
+      _refreshJournals();
       Global.teamCreatedStatus = true;
       if ((Global.toss == 0 && Global.tossWinnerSelected == 0) ||
           (Global.toss == 1 && Global.tossWinnerSelected == 1)) {
@@ -37,7 +39,8 @@ class _ScoreWheelState extends State<ScoreWheel> {
         Global.createBattingTeam(Global.teamB);
       }
     }
-    _refreshJournals();
+
+    print('no od item: ${_journals.length}');
 
     super.initState();
   }
@@ -223,6 +226,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                   onTap: () {
                                     setState(() {
+                                      Global.insertData('-5');
                                       Global.wic = true;
                                       Global.addABall(context);
                                       Global.totalRun += -5;
@@ -243,6 +247,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('4');
                                     Global.addABall(context);
                                     Global.totalRun += 4;
                                     Global.battingTeam[Global.currentBatsman]
@@ -261,6 +266,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('6');
                                     Global.addABall(context);
                                     Global.totalRun += 6;
                                     Global.battingTeam[Global.currentBatsman]
@@ -280,6 +286,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('4');
                                     Global.addABall(context);
                                     Global.totalRun += 4;
                                     Global.battingTeam[Global.currentBatsman]
@@ -299,6 +306,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('4');
                                     Global.addABall(context);
                                     Global.totalRun += 4;
                                     Global.battingTeam[Global.currentBatsman]
@@ -317,6 +325,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('NB');
                                     Global.check(context);
                                   });
                                 },
@@ -329,6 +338,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('WD');
                                     Global.totalRun += 1;
                                     Global.bowlingTeam[Global.currentBowler]
                                         ['runs'] += 1;
@@ -345,6 +355,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('out');
                                     Global.addABall(context);
                                     Global.battingTeam[Global.currentBatsman]
                                         ['status'] = 'out';
@@ -364,6 +375,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('0');
                                     Global.addABall(context);
                                     Global.check(context);
                                   });
@@ -377,6 +389,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('1');
                                     Global.addABall(context);
                                     Global.totalRun += 1;
                                     Global.battingTeam[Global.currentBatsman]
@@ -395,6 +408,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('2');
                                     Global.addABall(context);
                                     Global.totalRun += 2;
                                     Global.battingTeam[Global.currentBatsman]
@@ -413,6 +427,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('1');
                                     Global.addABall(context);
                                     Global.totalRun += 1;
                                     Global.battingTeam[Global.currentBatsman]
@@ -431,6 +446,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                 onTap: () {
                                   setState(() {
+                                    Global.insertData('2');
                                     Global.addABall(context);
                                     Global.totalRun += 2;
                                     Global.battingTeam[Global.currentBatsman]

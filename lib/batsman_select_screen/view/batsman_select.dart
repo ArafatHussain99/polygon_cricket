@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polygon_cricket/constants/utils.dart';
 import 'package:polygon_cricket/global.dart';
 
-import '../../score_wheel/view/scorewheel.dart';
+import '../../score_wheel/view/total_score_wheel_screen.dart';
 
 class BatsmanSelectScreen extends StatefulWidget {
   static const String id = 'batsmanscreen';
@@ -97,6 +97,8 @@ class _BatsmanSelectScreenState extends State<BatsmanSelectScreen> {
                       onPressed: () {
                         setState(() {
                           Global.currentBatsman = selectedBatsman - 1;
+                          Global.battingTeam[Global.currentBatsman]['status'] =
+                              'batting';
                           if (Global.currentBatsman == -1) {
                             showSnackBar(context, 'Please select a batsman');
                           } else {

@@ -30,7 +30,7 @@ class Global {
   //Software handling variables
   static bool animation = false;
   static double currentOver = 0;
-  static int currentInns = 4;
+  static int currentInns = 1;
   static int extra = 0;
   static String matchType = '';
   static double nextOver = 1;
@@ -182,5 +182,10 @@ class Global {
     if (bowlingTeam[i]['overs'] == 0) {
       bowlingTeam[i]['status'] = 'completed';
     }
+  }
+
+  static Future<void> insertData(String action) async {
+    await DatabaseHelper.createItem(battingTeam[Global.currentBatsman]['name'],
+        bowlingTeam[Global.currentBowler]['name'], action, currentInns);
   }
 }

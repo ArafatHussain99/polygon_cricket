@@ -1,15 +1,15 @@
-import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqflite.dart' as sql;
 import 'package:flutter/foundation.dart';
 
 class DatabaseHelper {
-  static Future<void> createDatabase(Database database) async {
+  static Future<void> createDatabase(sql.Database database) async {
     await database.execute(
         'CREATE TABLE balldetails (ballNo INTEGER PRIMARY KEY AUTOINCREMENT, batID TEXT, ballID TEXT, action TEXT, inns INTEGER)');
   }
 
-  static Future<Database> db() async {
-    return openDatabase('balldetails.db', version: 1,
-        onCreate: (Database database, int version) async {
+  static Future<sql.Database> db() async {
+    return sql.openDatabase('polygonCric.db', version: 1,
+        onCreate: (sql.Database database, int version) async {
       await createDatabase(database);
     });
   }
@@ -29,14 +29,46 @@ class DatabaseHelper {
   }
 
   static Future<List<Map<String, dynamic>>> getItems() async {
-    final database = await db();
+    final database = await DatabaseHelper.db();
     return database.query('balldetails', orderBy: "ballNo");
   }
 
   static Future<List<Map<String, dynamic>>> getItem(String action) async {
-    final database = await db();
+    final database = await DatabaseHelper.db();
     return database.query('balldetails',
-        where: "action = ?", whereArgs: [action], limit: 3);
+        where: "action = ?", whereArgs: [action], limit: 2);
+  }
+
+  static Future<int> updateItem(
+      int ballNo, String action, String batID, String ballID, int inns) async {
+    final db = await DatabaseHelper.db();
+    final data = {
+      'action': action,
+      'batID': batID,
+      'ballID': ballID,
+      'inns': inns
+    };
+    final result = await db
+        .update('balldetails', data, where: "id = ?", whereArgs: [ballNo]);
+    return result;
+  }
+
+  static Future<void> deleteItem(String action) async {
+    final db = await DatabaseHelper.db();
+    try {
+      await db.delete('balldetails', where: 'action = ?', whereArgs: [action]);
+    } catch (err) {
+      debugPrint('Something wrong: $err');
+    }
+  }
+
+  static Future<void> deleteTable() async {
+    final db = await DatabaseHelper.db();
+    try {
+      await db.delete('balldetails');
+    } catch (err) {
+      debugPrint('Something wrong: $err');
+    }
   }
 }
 
