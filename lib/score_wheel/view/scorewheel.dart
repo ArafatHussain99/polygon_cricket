@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polygon_cricket/global.dart';
 import 'package:polygon_cricket/reusable_widgets/run_button.dart';
+import 'package:polygon_cricket/score_card/controller/database_controller.dart';
 import 'package:polygon_cricket/score_card/view/score_card_screen.dart';
 import 'package:polygon_cricket/score_wheel/view/out_animation.dart';
 
@@ -13,6 +14,16 @@ class ScoreWheel extends StatefulWidget {
 }
 
 class _ScoreWheelState extends State<ScoreWheel> {
+  List<Map<String, dynamic>> _journals = [];
+  bool _isLoading = true;
+  void _refreshJournals() async {
+    final data = await DatabaseHelper.getItems();
+    setState(() {
+      _journals = data;
+      _isLoading = false;
+    });
+  }
+
   @override
   void initState() {
     if (Global.teamCreatedStatus == false) {
@@ -26,9 +37,8 @@ class _ScoreWheelState extends State<ScoreWheel> {
         Global.createBattingTeam(Global.teamB);
       }
     }
-    setState(() {
-      image = 'assets/images/out2.jpg';
-    });
+    _refreshJournals();
+
     super.initState();
   }
 

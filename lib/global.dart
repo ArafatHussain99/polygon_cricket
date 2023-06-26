@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polygon_cricket/batsman_select_screen/view/batsman_select.dart';
 import 'package:polygon_cricket/bowler_select_screen/view/bowler_select.dart';
 import 'package:polygon_cricket/constants/utils.dart';
+import 'package:polygon_cricket/score_card/controller/database_controller.dart';
 
 class Global {
   //Dummy values
@@ -29,15 +30,18 @@ class Global {
   //Software handling variables
   static bool animation = false;
   static double currentOver = 0;
+  static int currentInns = 4;
   static int extra = 0;
   static String matchType = '';
   static double nextOver = 1;
+
   static bool overAddedToNextOver = false;
   static int runLimit = 0;
   static bool teamCreatedStatus =
       false; //to stop creating team more than once, as it adding players again and agian.
   static int toss = 0;
   static int tossWinnerSelected = -1;
+  static int totalInns = 4;
   static double totalOvers = 0;
   static int totalRun = 0;
   static int totalWic = 0;
@@ -136,13 +140,15 @@ class Global {
         battingTeam[Global.currentBatsman]['status'] = 'limit exceeded';
         showSnackBar(context,
             "${battingTeam[Global.currentBatsman]['name']}'s run exceeded total run limit");
-        currentBatsman = -1;
+        if (currentOver != totalOvers) {
+          currentBatsman = -1;
+        }
       }
     }
     if (Global.battingTeam
         .where((player) => player['status'] == 'not out')
         .isEmpty) {
-      runLimit = 1000;
+      runLimit = 100;
     }
   }
 
