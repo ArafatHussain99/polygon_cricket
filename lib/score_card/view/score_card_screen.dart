@@ -22,6 +22,11 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
 
     Iterable<Map<String, dynamic>> batted =
         Global.battingTeam.where((player) => player['status'] != 'not out');
+    String returnSR(int run, int ball) {
+      double SR = (run / ball) * 100;
+      String roundedSR = SR.toStringAsFixed(0);
+      return roundedSR;
+    }
 
     return Scaffold(
         body: SafeArea(
@@ -394,7 +399,8 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                                         color: Colors.black45),
                                   )
                                 : Text(
-                                    '${(batted.elementAt(index)['runs'] / batted.elementAt(index)['ball']) * 100}',
+                                    returnSR(batted.elementAt(index)['runs'],
+                                        batted.elementAt(index)['ball']),
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black45),
