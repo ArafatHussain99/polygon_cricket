@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polygon_cricket/constants/utils.dart';
 import 'package:polygon_cricket/global.dart';
 
-import '../../score_wheel/view/total_score_wheel_screen.dart';
+import '../../score_wheel/view/main_score_wheel_screen.dart';
 
 class BatsmanSelectScreen extends StatefulWidget {
   static const String id = 'batsmanscreen';

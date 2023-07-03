@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polygon_cricket/constants/utils.dart';
 import 'package:polygon_cricket/global.dart';
-import 'package:polygon_cricket/score_wheel/view/total_score_wheel_screen.dart';
+import 'package:polygon_cricket/score_wheel/view/main_score_wheel_screen.dart';
 
 class TossScreen extends StatefulWidget {
   static const String id = 'tossScreen';

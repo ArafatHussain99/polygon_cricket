@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:polygon_cricket/batsman_select_screen/view/batsman_select.dart';
 import 'package:polygon_cricket/bowler_select_screen/view/bowler_select.dart';
 import 'package:polygon_cricket/score_card/view/score_card_screen.dart';
-import 'package:polygon_cricket/score_wheel/view/total_score_wheel_screen.dart';
+import 'package:polygon_cricket/score_wheel/view/main_score_wheel_screen.dart';
 import 'package:polygon_cricket/toss_screen/view/toss_screen.dart';
 
 Route<dynamic> generateRoute(RouteSettings routeSettings) {

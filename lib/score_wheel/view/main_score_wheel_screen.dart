@@ -14,15 +14,15 @@ class ScoreWheel extends StatefulWidget {
 }
 
 class _ScoreWheelState extends State<ScoreWheel> {
-  List<Map<String, dynamic>> _journals = [];
-  bool _isLoading = true;
+  // List<Map<String, dynamic>> _journals = [];
+  // bool _isLoading = true;
   void _refreshJournals() async {
-    await DatabaseHelper.createItem('null', 'null', 'null', -1);
-    final data = await DatabaseHelper.getItems();
-    setState(() {
-      _journals = data;
-      _isLoading = false;
-    });
+    await DatabaseHelper.open();
+    // final data = await DatabaseHelper.getItems();
+    // setState(() {
+    //   _journals = data;
+    //   _isLoading = false;
+    // });
   }
 
   @override
@@ -40,7 +40,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
       }
     }
 
-    print('no od item: ${_journals.length}');
+    // print('no od item: ${_journals.length}');
 
     super.initState();
   }

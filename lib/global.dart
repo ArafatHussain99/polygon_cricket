@@ -188,4 +188,17 @@ class Global {
     await DatabaseHelper.createItem(battingTeam[Global.currentBatsman]['name'],
         bowlingTeam[Global.currentBowler]['name'], action, currentInns);
   }
+
+  static Future<List<Map<String, dynamic>>> getData() async {
+    List<Map<String, dynamic>> dataList = await DatabaseHelper.getItems();
+    return dataList;
+  }
+
+  static Future<void> deleteData() async {
+    await DatabaseHelper.deleteTable();
+  }
+
+  static Future<void> createDatabase() async {
+    await DatabaseHelper.open();
+  }
 }

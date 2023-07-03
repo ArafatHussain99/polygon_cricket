@@ -1,22 +1,31 @@
+import 'dart:io';
+
 import 'package:sqflite/sqflite.dart' as sql;
 import 'package:flutter/foundation.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path_provider/path_provider.dart';
 
 class DatabaseHelper {
-  static Future<void> createDatabase(sql.Database database) async {
-    await database.execute(
-        'CREATE TABLE balldetails (ballNo INTEGER PRIMARY KEY AUTOINCREMENT, batID TEXT, ballID TEXT, action TEXT, inns INTEGER)');
-  }
-
-  static Future<sql.Database> db() async {
+  // static Future<void> createDatabase(sql.Database database) async {
+  //   print('creating database');
+  //   await database.execute(
+  //       '''CREATE TABLE balldetails (ballNo INTEGER PRIMARY KEY AUTOINCREMENT, batID TEXT, ballID TEXT, action TEXT, inns INTEGER)''');
+  //   print('done creating database');
+  // }
+  late sql.Database db;
+  static Future<sql.Database> open() async {
+    print('in open..');
     return sql.openDatabase('polygonCric.db', version: 1,
         onCreate: (sql.Database database, int version) async {
-      await createDatabase(database);
+      print('creating new table');
+      await database.execute(
+          '''CREATE TABLE IF NOT EXISTS balldetails (ballNo INTEGER PRIMARY KEY AUTOINCREMENT, batID TEXT, ballID TEXT, action TEXT, inns INTEGER)''');
     });
   }
 
   static Future<int> createItem(
       String batID, String ballID, String action, int inns) async {
-    final db = await DatabaseHelper.db();
+    final db = await DatabaseHelper.open();
 
     final data = {
       'batID': batID,
@@ -29,19 +38,19 @@ class DatabaseHelper {
   }
 
   static Future<List<Map<String, dynamic>>> getItems() async {
-    final database = await DatabaseHelper.db();
+    final database = await DatabaseHelper.open();
     return database.query('balldetails', orderBy: "ballNo");
   }
 
   static Future<List<Map<String, dynamic>>> getItem(String action) async {
-    final database = await DatabaseHelper.db();
+    final database = await DatabaseHelper.open();
     return database.query('balldetails',
         where: "action = ?", whereArgs: [action], limit: 2);
   }
 
   static Future<int> updateItem(
       int ballNo, String action, String batID, String ballID, int inns) async {
-    final db = await DatabaseHelper.db();
+    final db = await DatabaseHelper.open();
     final data = {
       'action': action,
       'batID': batID,
@@ -54,7 +63,7 @@ class DatabaseHelper {
   }
 
   static Future<void> deleteItem(String action) async {
-    final db = await DatabaseHelper.db();
+    final db = await DatabaseHelper.open();
     try {
       await db.delete('balldetails', where: 'action = ?', whereArgs: [action]);
     } catch (err) {
@@ -63,12 +72,37 @@ class DatabaseHelper {
   }
 
   static Future<void> deleteTable() async {
-    final db = await DatabaseHelper.db();
+    final db = await DatabaseHelper.open();
     try {
-      await db.delete('balldetails');
+      await db.execute('DROP TABLE IF EXISTS balldetails');
     } catch (err) {
       debugPrint('Something wrong: $err');
     }
+  }
+
+  static Future<void> deleteDatabaseFile() async {
+    final db = await DatabaseHelper.open();
+    // Get the directory where the database file is located
+    // Directory directory = await getApplicationDocumentsDirectory();
+    // String path = directory.path + '/polygonCric.db';
+    String databasePath = await getDatabasesPath();
+    String databaseName = 'polygonCric.db';
+    String path = '$databasePath/$databaseName';
+    // Check if the database file exists
+    bool exists = await databaseExists(path);
+    if (exists) {
+      print('yes exists!');
+      // Close any open connections to the database
+      await db.close();
+
+      // Delete the database file
+      await deleteDatabase(path);
+    }
+  }
+
+  static Future<int> version() async {
+    final db = await DatabaseHelper.open();
+    return db.getVersion();
   }
 }
 
