@@ -226,7 +226,7 @@ class _ScoreWheelState extends State<ScoreWheel> {
                               child: RunButton(
                                   onTap: () {
                                     setState(() {
-                                      Global.insertData('-5');
+                                      Global.insertData('out');
                                       Global.wic = true;
                                       Global.addABall(context);
                                       Global.totalRun += -5;

@@ -14,7 +14,6 @@ class DatabaseHelper {
   // }
   late sql.Database db;
   static Future<sql.Database> open() async {
-    print('in open..');
     return sql.openDatabase('polygonCric.db', version: 1,
         onCreate: (sql.Database database, int version) async {
       print('creating new table');
@@ -91,7 +90,6 @@ class DatabaseHelper {
     // Check if the database file exists
     bool exists = await databaseExists(path);
     if (exists) {
-      print('yes exists!');
       // Close any open connections to the database
       await db.close();
 
@@ -103,6 +101,175 @@ class DatabaseHelper {
   static Future<int> version() async {
     final db = await DatabaseHelper.open();
     return db.getVersion();
+  }
+
+  static Future<int> getTotalOvers(int inns) async {
+    Database database = await openDatabase('polygonCric.db');
+
+    List<Map<String, dynamic>> result = await database.query(
+      'balldetails',
+      where:
+          'inns = ? AND (action = ? OR action = ? OR action = ? OR action = ? OR action = ?)',
+      whereArgs: [inns, '1', '2', '4', 'out', '6'],
+    );
+
+    return result.length;
+  }
+
+  static Future<int> getfoursScored(String batID, int inns) async {
+    Database database = await openDatabase('polygonCric.db');
+
+    List<Map<String, dynamic>> result = await database.query(
+      'balldetails',
+      where: 'batID = ? AND action = ? AND inns = ?',
+      whereArgs: [batID, '4', inns],
+    );
+
+    return result.length;
+  }
+
+  static Future<int> getSixessScored(String batID, int inns) async {
+    Database database = await openDatabase('polygonCric.db');
+
+    List<Map<String, dynamic>> result = await database.query(
+      'balldetails',
+      where: 'batID = ? AND action = ? AND inns = ?',
+      whereArgs: [batID, '6', inns],
+    );
+
+    return result.length;
+  }
+
+  static Future<int> batsmansTotalRunPerInns(String batID, int inns) async {
+    Database database = await openDatabase('polygonCric.db');
+
+    List<Map<String, dynamic>> result = await database.query(
+      'balldetails',
+      where: 'batID = ? AND inns = ?',
+      whereArgs: [batID, inns],
+    );
+    int totalRun = 0;
+    for (Map<String, dynamic> action in result) {
+      if (action['action'] == '1') {
+        totalRun += 1;
+      }
+      if (action['action'] == '2') {
+        totalRun += 2;
+      }
+      if (action['action'] == '4') {
+        totalRun += 4;
+      }
+      if (action['action'] == '6') {
+        totalRun += 6;
+      }
+      if (action['action'] == '-5') {
+        totalRun -= 5;
+      }
+    }
+
+    return totalRun;
+  }
+
+  static Future<int> batsmansBallsFacedPerInns(String batID, int inns) async {
+    Database database = await openDatabase('polygonCric.db');
+
+    List<Map<String, dynamic>> result = await database.query(
+      'balldetails',
+      where: 'batID = ? AND inns = ?',
+      whereArgs: [batID, inns],
+    );
+    return result.length;
+  }
+
+  static Future<String> batsmansStrikeRatePerInns(
+      String batID, int inns) async {
+    int ball = await batsmansBallsFacedPerInns(batID, inns);
+    if (ball == 0) {
+      return '0.00';
+    }
+    int runs = await batsmansTotalRunPerInns(batID, inns);
+    double strikeRate = (runs / ball) * 100;
+    return strikeRate.toStringAsFixed(0);
+  }
+
+  static Future<int> getTotalTeamRun(int inns) async {
+    Database database = await openDatabase('polygonCric.db');
+
+    List<Map<String, dynamic>> result = await database.query(
+      'balldetails',
+      where: 'inns = ?',
+      whereArgs: [inns],
+    );
+    int totalRun = 0;
+    for (Map<String, dynamic> action in result) {
+      if (action['action'] == '1') {
+        totalRun += 1;
+      }
+      if (action['action'] == '2') {
+        totalRun += 2;
+      }
+      if (action['action'] == '4') {
+        totalRun += 4;
+      }
+      if (action['action'] == '6') {
+        totalRun += 6;
+      }
+      if (action['action'] == '-5') {
+        totalRun -= 5;
+      }
+      if (action['action'] == 'WD') {
+        totalRun += 1;
+      }
+    }
+
+    return totalRun;
+  }
+
+  static Future<int> getTotalTeamWic(int inns) async {
+    Database database = await openDatabase('polygonCric.db');
+
+    List<Map<String, dynamic>> result = await database.query(
+      'balldetails',
+      where: 'inns = ? AND action = ?',
+      whereArgs: [inns, 'out'],
+    );
+    return result.length;
+  }
+
+  static Future<List<String>> getUniqueBowlerNames() async {
+    Database database = await openDatabase('polygonCric.db');
+
+    // Fetch all data from the table
+    List<Map<String, dynamic>> result = await database.query('balldetails');
+
+    // Extract unique names from the result
+    Set<String> uniqueNames = <String>{};
+    for (Map<String, dynamic> row in result) {
+      String name = row[
+          'ballID']; // Replace 'name' with the column name containing the names in your table
+      uniqueNames.add(name);
+    }
+
+    // Convert the set to a list and return
+    return uniqueNames.toList();
+  }
+
+  static Future<List<String>> getUniqueBatsmanNames() async {
+    Database database = await openDatabase('polygonCric.db');
+
+    // Fetch all data from the table
+    List<Map<String, dynamic>> result = await database.query('balldetails');
+
+    // Extract unique names from the result
+    Set<String> uniqueNames = <String>{};
+    for (Map<String, dynamic> row in result) {
+      String name = row[
+          'batID']; // Replace 'name' with the column name containing the names in your table
+      uniqueNames.add(name);
+    }
+
+    // Convert the set to a list and return
+    return uniqueNames.toList();
   }
 }
 
