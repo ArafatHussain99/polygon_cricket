@@ -99,6 +99,9 @@ class _BatsmanSelectScreenState extends State<BatsmanSelectScreen> {
                           Global.currentBatsman = selectedBatsman - 1;
                           Global.battingTeam[Global.currentBatsman]['status'] =
                               'batting';
+                          Global.battingTeam[Global.currentBatsman]['batAt'] =
+                              Global.battingPos;
+                          Global.battingPos += 1;
                           if (Global.currentBatsman == -1) {
                             showSnackBar(context, 'Please select a batsman');
                           } else {

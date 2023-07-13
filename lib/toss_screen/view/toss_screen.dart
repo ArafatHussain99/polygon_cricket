@@ -3,6 +3,8 @@ import 'package:polygon_cricket/constants/utils.dart';
 import 'package:polygon_cricket/global.dart';
 import 'package:polygon_cricket/score_wheel/view/main_score_wheel_screen.dart';
 
+import '../../score_card/controller/database_controller.dart';
+
 class TossScreen extends StatefulWidget {
   static const String id = 'tossScreen';
   const TossScreen({super.key});
@@ -16,6 +18,23 @@ class _TossScreenState extends State<TossScreen> {
   List<String> matchTypes = <String>['Test', 'Limited Overs'];
   final overController = TextEditingController();
   final runLimitController = TextEditingController();
+  void _refreshJournals() async {
+    await DatabaseHelper.open();
+    await DatabaseHelper.createInfoTable();
+    // final data = await DatabaseHelper.getItems();
+    // setState(() {
+    //   _journals = data;
+    //   _isLoading = false;
+    // });
+  }
+
+  @override
+  void initState() {
+    _refreshJournals();
+    // TODO: implement initState
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,7 +194,7 @@ class _TossScreenState extends State<TossScreen> {
                 child: Row(
                   children: [
                     const Text(
-                      'Match Tye: ',
+                      'Match Type: ',
                       style:
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
@@ -208,6 +227,13 @@ class _TossScreenState extends State<TossScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 15),
                   child: TextButton(
                     onPressed: () {
+                      if (selectedMatchType == 'Test') {
+                        Global.tossWinnerSelected = 0;
+                      }
+                      if (selectedMatchType == 'Limited Overs') {
+                        Global.tossWinnerSelected = 1;
+                      }
+                      print(Global.tossWinnerSelected);
                       Global.totalOvers == 0
                           ? showSnackBar(context, 'Please select total overs.')
                           : Global.tossWinnerSelected == -1

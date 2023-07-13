@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:polygon_cricket/batsman_select_screen/view/batsman_select.dart';
 import 'package:polygon_cricket/bowler_select_screen/view/bowler_select.dart';
+import 'package:polygon_cricket/dummy_pagge/dummy_page.dart';
 import 'package:polygon_cricket/score_card/view/score_card_screen.dart';
 import 'package:polygon_cricket/score_wheel/view/main_score_wheel_screen.dart';
 import 'package:polygon_cricket/toss_screen/view/toss_screen.dart';
@@ -32,6 +33,11 @@ Route<dynamic> generateRoute(RouteSettings routeSettings) {
       return MaterialPageRoute(
         settings: routeSettings,
         builder: (_) => const ScoreCardScreen(),
+      );
+    case DummyPage.id:
+      return MaterialPageRoute(
+        settings: routeSettings,
+        builder: (_) => const DummyPage(),
       );
     default:
       return MaterialPageRoute(

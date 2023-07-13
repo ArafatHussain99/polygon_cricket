@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:polygon_cricket/dummy_pagge/dummy_page.dart';
 import 'package:polygon_cricket/global.dart';
+import 'package:polygon_cricket/toss_screen/view/toss_screen.dart';
 
 import '../controller/database_controller.dart';
 
@@ -18,36 +20,68 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
       'TeamA'; //change the TeamA and TeamB button color and decoration
   int overs = 0;
   Future<void> getOvers(int inns) async {
-    await DatabaseHelper.getTotalOvers(1).then((value) => overs = value);
+    await DatabaseHelper.getTotalOvers(1).then((value) {
+      setState(() {
+        overs = value;
+      });
+    });
   }
 
-  List<String> bowled = [];
-  List<String> batt = [];
-
-  Future<void> getBowlerList() async {
-    bowled = await DatabaseHelper.getUniqueBowlerNames();
-    print(bowled);
-  }
-
-  Future<void> getBatterList() async {
-    batt = await DatabaseHelper.getUniqueBatsmanNames();
-    print(batt);
-  }
+  // List<String> bowled = [];
+  // Future<void> getBowlerList() async {
+  //   bowled = await DatabaseHelper.getUniqueBowlerNames();
+  //   print(bowled);
+  // }
 
   @override
   void initState() {
-    getBowlerList();
+    //getBowlerList();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    var key1 = GlobalKey();
-    var key2 = GlobalKey();
-    getOvers(1);
-    Iterable<Map<String, dynamic>> batted =
-        Global.battingTeam.where((player) => player['status'] != 'not out');
+    // var key1 = GlobalKey();
+    // var key2 = GlobalKey();
+    if (overs == 0) {
+      getOvers(1);
+    }
+    print(overs);
+    Iterable<Map<String, dynamic>> batted = Global.battingTeam
+        .where((player) => player['status'] != 'not out')
+        .toList()
+      ..sort((a, b) => a['batAt'].compareTo(b['batAt']));
 
+    Iterable<Map<String, dynamic>> didNotBat =
+        Global.battingTeam.where((player) => player['status'] == 'not out');
+    Iterable<Map<String, dynamic>> bowled =
+        Global.bowlingTeam.where((player) => player['overs'] != 0);
+    List<Widget> didNotBatList = [];
+    List<Widget> foWList = [];
+
+    for (int i = 0; i < didNotBat.length; i++) {
+      if (i == didNotBat.length - 1) {
+        didNotBatList.add(Text('${didNotBat.elementAt(i)['name']}'));
+      } else {
+        didNotBatList.add(Text('${didNotBat.elementAt(i)['name']}, '));
+      }
+    }
+    //1-256 (Rahmanullah Gurbaz, 36.1 ov),
+    // Global.foW.add({
+    //       'batPos': Global.battingPos,
+    //       'run': Global.totalRun,
+    //       'name': Global.bowlingTeam[Global.currentBatsman]['name'],
+    //       'over': Global.currentOver,
+    // });
+    for (int i = 0; i < Global.foW.length; i++) {
+      if (i == didNotBat.length - 1) {
+        foWList.add(Text(
+            '${Global.foW.elementAt(i)['batPos']}-${Global.foW.elementAt(i)['run']} (${Global.foW.elementAt(i)['name']}, ${Global.foW.elementAt(i)['over']} ov)'));
+      } else {
+        foWList.add(Text(
+            '${Global.foW.elementAt(i)['batPos']}-${Global.foW.elementAt(i)['run']} (${Global.foW.elementAt(i)['name']}, ${Global.foW.elementAt(i)['over']} ov), '));
+      }
+    }
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
@@ -211,9 +245,10 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            setState(() {
-                              teamSelected = 'TeamA';
-                            });
+                            print(Global.battingTeam);
+                            // setState(() {
+                            //   teamSelected = 'TeamA';
+                            // });
                           },
                           child: Container(
                             padding: const EdgeInsets.all(10),
@@ -241,17 +276,15 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                         ),
                         GestureDetector(
                           onTap: () async {
-                            totalData = await Global.getData();
+                            totalData = await Global.getInfo();
                             setState(() {
                               teamSelected = 'TeamB';
-                              for (var data in totalData) {
-                                print(data);
-                              }
                               // Scrollable.ensureVisible(
                               //   key2.currentContext!,
                               //   duration: const Duration(milliseconds: 500),
                               // );
                             });
+                            Navigator.pushNamed(context, DummyPage.id);
                           },
                           child: Container(
                             padding: const EdgeInsets.all(10),
@@ -277,40 +310,43 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                         const SizedBox(
                           width: 10,
                         ),
-                        // GestureDetector(
-                        //   onTap: () {
-                        //     setState(() {
-                        //       teamSelected = 'clear';
-                        //       for (var data in totalData) {
-                        //         print(data);
-                        //       }
-                        //       // Scrollable.ensureVisible(
-                        //       //   key2.currentContext!,
-                        //       //   duration: const Duration(milliseconds: 500),
-                        //       // );
-                        //     });
-                        //   },
-                        //   child: Container(
-                        //     padding: const EdgeInsets.all(10),
-                        //     decoration: BoxDecoration(
-                        //       color: teamSelected == 'Clear'
-                        //           ? Colors.grey.shade300
-                        //           : Colors.white,
-                        //       borderRadius: BorderRadius.circular(30),
-                        //       border: teamSelected == 'Clear'
-                        //           ? null
-                        //           : Border.all(color: Colors.red, width: 1.5),
-                        //     ),
-                        //     child: Text(
-                        //       'Refresh',
-                        //       style: TextStyle(
-                        //           fontWeight: FontWeight.bold,
-                        //           color: teamSelected == 'Clear'
-                        //               ? Colors.black
-                        //               : Colors.red),
-                        //     ),
-                        //   ),
-                        // ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              Navigator.pushNamedAndRemoveUntil(
+                                  context, TossScreen.id, (route) => false);
+                              DatabaseHelper.deleteDatabaseFile();
+                              teamSelected = 'clear';
+
+                              // for (var data in totalData) {
+                              // }
+                              // Scrollable.ensureVisible(
+                              //   key2.currentContext!,
+                              //   duration: const Duration(milliseconds: 500),
+                              // );
+                            });
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: teamSelected == 'Clear'
+                                  ? Colors.grey.shade300
+                                  : Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                              border: teamSelected == 'Clear'
+                                  ? null
+                                  : Border.all(color: Colors.red, width: 1.5),
+                            ),
+                            child: Text(
+                              'clear',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: teamSelected == 'Clear'
+                                      ? Colors.black
+                                      : Colors.red),
+                            ),
+                          ),
+                        ),
                         const SizedBox(
                           width: 10,
                         ),
@@ -619,6 +655,63 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                   }),
                 ),
               ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                width: double.infinity,
+                color: Colors.grey.shade300,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Total',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      Text(
+                        '${Global.currentOver} Ov (RR: ${((Global.totalRun / overs) * 6).toStringAsFixed(1)})',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                      Text(
+                        '${Global.totalRun}/${Global.totalWic}',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 20),
+                      ),
+                    ]),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Row(children: [
+                    const Text(
+                      'Yet to bat: ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: didNotBatList,
+                    )
+                  ]),
+                ),
+              ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Row(children: [
+                    const Text(
+                      'FoW: ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    Row(
+                      children: foWList,
+                    )
+                  ]),
+                ),
+              ),
               //1st inns bowling
               Container(
                 padding:
@@ -638,7 +731,7 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                     SizedBox(
                       width: 35,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: const [
                           Text(
                             'O',
@@ -652,7 +745,7 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                     SizedBox(
                       width: 35,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: const [
                           Text(
                             'R',
@@ -664,9 +757,9 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                       ),
                     ),
                     SizedBox(
-                      width: 30,
+                      width: 27,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: const [
                           Text(
                             'W',
@@ -678,9 +771,9 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                       ),
                     ),
                     SizedBox(
-                      width: 32,
+                      width: 35,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: const [
                           Text(
                             'Econ',
@@ -694,7 +787,7 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                     SizedBox(
                       width: 35,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: const [
                           Text(
                             '0s',
@@ -708,7 +801,7 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                     SizedBox(
                       width: 35,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: const [
                           Text(
                             'NB',
@@ -722,7 +815,7 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                     SizedBox(
                       width: 35,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: const [
                           Text(
                             'WD',
@@ -740,7 +833,7 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                 padding:
                     const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 child: Column(
-                  children: List.generate(batted.length, (index) {
+                  children: List.generate(bowled.length, (index) {
                     return Row(
                       children: [
                         Column(
@@ -750,7 +843,7 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                               width: MediaQuery.of(context).size.width / 3,
                               height: 20,
                               child: Text(
-                                '${batted.elementAt(index)['name']}',
+                                '${bowled.elementAt(index)['name']}',
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -761,11 +854,83 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                         SizedBox(
                           width: 35,
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                (bowled.elementAt(index)['overs'])
+                                    .toStringAsFixed(1),
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black45),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 35,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                '${bowled.elementAt(index)['runs']}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black45),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 27,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                '${bowled.elementAt(index)['wic']}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black45),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 35,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               FutureBuilder<int>(
-                                future: DatabaseHelper.batsmansTotalRunPerInns(
-                                    batted.elementAt(index)['name'], 1),
+                                future: DatabaseHelper.bowlersTotalBallsBowled(
+                                    bowled.elementAt(index)['name'], 1),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    // While the Future is not yet complete, display a loading indicator
+                                    return const CircularProgressIndicator();
+                                  } else if (snapshot.hasError) {
+                                    // If an error occurred, display an error message
+                                    return Text('Error: ${snapshot.error}');
+                                  } else {
+                                    return Text(
+                                      '${((bowled.elementAt(index)['runs'] / snapshot.data) * 6).toStringAsFixed(1)}',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black45),
+                                    );
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: 35,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              FutureBuilder<int>(
+                                future: DatabaseHelper.bowlersTotalDotsBowled(
+                                    bowled.elementAt(index)['name'], 1),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
@@ -790,12 +955,11 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                         SizedBox(
                           width: 35,
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               FutureBuilder<int>(
-                                future:
-                                    DatabaseHelper.batsmansBallsFacedPerInns(
-                                        batted.elementAt(index)['name'], 1),
+                                future: DatabaseHelper.bowlersTotalNBBowled(
+                                    bowled.elementAt(index)['name'], 1),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
@@ -818,13 +982,13 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                           ),
                         ),
                         SizedBox(
-                          width: 30,
+                          width: 35,
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               FutureBuilder<int>(
-                                future: DatabaseHelper.getfoursScored(
-                                    batted.elementAt(index)['name'], 1),
+                                future: DatabaseHelper.bowlersTotalWDBowled(
+                                    bowled.elementAt(index)['name'], 1),
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
@@ -846,69 +1010,6 @@ class _ScoreCardScreenState extends State<ScoreCardScreen> {
                             ],
                           ),
                         ),
-                        SizedBox(
-                          width: 30,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              FutureBuilder<int>(
-                                future: DatabaseHelper.getSixessScored(
-                                    batted.elementAt(index)['name'], 1),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    // While the Future is not yet complete, display a loading indicator
-                                    return const CircularProgressIndicator();
-                                  } else if (snapshot.hasError) {
-                                    // If an error occurred, display an error message
-                                    return Text('Error: ${snapshot.error}');
-                                  } else {
-                                    return Text(
-                                      '${snapshot.data}',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black45),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width -
-                              (MediaQuery.of(context).size.width / 2) -
-                              10 -
-                              10 -
-                              120,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              FutureBuilder<String>(
-                                future:
-                                    DatabaseHelper.batsmansStrikeRatePerInns(
-                                        batted.elementAt(index)['name'], 1),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    // While the Future is not yet complete, display a loading indicator
-                                    return const CircularProgressIndicator();
-                                  } else if (snapshot.hasError) {
-                                    // If an error occurred, display an error message
-                                    return Text('Error: ${snapshot.error}');
-                                  } else {
-                                    return Text(
-                                      '${snapshot.data}',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black45),
-                                    );
-                                  }
-                                },
-                              ),
-                            ],
-                          ),
-                        )
                       ],
                     );
                   }),
